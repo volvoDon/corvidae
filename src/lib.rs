@@ -30,6 +30,13 @@ pub fn scramble(content: &mut String, config: &Config) -> Result<(),&'static str
     if config.argument == "F" {
         return Err("TRIGGERED BY TYPE F")
     }
-    println!("{}",content);
+    println!("not enc: {}",content);
+    let b_content =  content.as_bytes().clone();
+    let mut nb_content= vec![];
+    for item in b_content {
+        nb_content.push(item+1)
+    }
+    let mut content = String::from_utf8(nb_content).expect("could not compile UTF8");
+    println!("enc: {}",content); 
     Ok(())
 }
