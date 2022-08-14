@@ -1,4 +1,5 @@
-use std::env;
+use std::{env, error::Error, fs};
+
 
 fn main() {
     let config : Vec<String> = env::args().collect();
@@ -6,6 +7,10 @@ fn main() {
     println!("key: {}",config.key);
     println!("file: {}",config.file);
     println!("argument: {}",config.argument);
+
+    let mut content = readfile(&config.file).unwrap();
+    scramble(&mut content, &config).unwrap();
+
 
 }
 
@@ -26,4 +31,18 @@ impl Config {
         let argument = args[3].clone();
         Ok(Config{key,file,argument})
     }    
+}
+
+fn readfile(file:&String) -> Result<String,Box<dyn Error>> {
+    let contents = fs::read_to_string(file)?;
+    Ok(contents)
+
+}
+
+fn scramble(content: &mut String, config: &Config) -> Result<(),&'static str> {
+    if config.argument == "F" {
+        return Err("TRIGGERED BY TYPE F")
+    }
+    println!("{}",content);
+    Ok(())
 }
