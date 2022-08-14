@@ -26,7 +26,7 @@ pub fn readfile(file:&String) -> Result<String,Box<dyn Error>> {
 
 }
 
-pub fn scramble(content: &mut String, config: &Config) -> Result<(),&'static str> {
+pub fn scramble(content: &String, config: &Config) -> Result<(),&'static str> {
     if config.argument == "F" {
         return Err("TRIGGERED BY TYPE F")
     }
@@ -36,7 +36,7 @@ pub fn scramble(content: &mut String, config: &Config) -> Result<(),&'static str
     for item in b_content {
         nb_content.push(item+1)
     }
-    let mut content = String::from_utf8(nb_content).expect("could not compile UTF8");
+    let content = String::from_utf8(nb_content).expect("could not compile UTF8");
     println!("enc: {}",content); 
     Ok(())
 }

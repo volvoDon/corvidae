@@ -9,8 +9,8 @@ fn main() {
     println!("file: {}",config.file);
     println!("argument: {}",config.argument);
 
-    let mut content = corvidae::readfile(&config.file).unwrap();
-    corvidae::scramble(&mut content, &config).unwrap();
+    let content = corvidae::readfile(&config.file).unwrap();
+    corvidae::scramble(&content, &config).unwrap();
 }
 
 
