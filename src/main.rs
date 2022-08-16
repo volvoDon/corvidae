@@ -9,8 +9,9 @@ fn main() {
     println!("file: {}",config.file);
     println!("argument: {}",config.argument);
 
-    let content = corvidae::readfile(&config.file).unwrap();
-    corvidae::scramble(&content, &config).unwrap();
+     
+    let content = corvidae::scramble( &config).unwrap();
+    println!("{}",content);
 }
 
 

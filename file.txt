@@ -1,2 +1,1 @@
-This is my text file,
-It has a message
+Hi My name is Sam I really enjoy creating encoded messages
