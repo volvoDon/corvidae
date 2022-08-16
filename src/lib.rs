@@ -35,17 +35,17 @@ pub fn scramble(config: &Config) -> Result<String,&'static str> {
     println!("not enc: {}",content);
     let b_content =  content.as_bytes();
     let key_vector = config.key.as_bytes();
-    let mut nb_content= vec![];
+    let mut nb_content: Vec<u32> = Vec::new();
     let mut i = 0 ;
     let mut k = 0 ;
     while i < b_content.len() {
         if k >= key_vector.len() {
             k = 0;
-            nb_content.push(b_content[i] + key_vector[k]);
+            nb_content.push(u32::from(b_content[i]) + u32::from(key_vector[k]));
             i+=1;
             k+=1;  
         } else {
-            nb_content.push(b_content[i] + key_vector[k]);
+            nb_content.push(u32::from(b_content[i]) + u32::from(key_vector[k]));
             i+=1;
             k+=1;  
         }
@@ -53,7 +53,8 @@ pub fn scramble(config: &Config) -> Result<String,&'static str> {
     }
     let mut content = String::new();
     for item in nb_content {
-        content.push_str("-");
+        
+        content.push_str("#");
         content.push_str(&item.to_string());
     }
     Ok(content)
