@@ -26,6 +26,7 @@ fn readfile(file:&String) -> Result<String,Box<dyn Error>> {
 
 }
 
+//TODO refactor to accept longer keys maybe break into multiple functions
 pub fn scramble(config: &Config) -> Result<String,&'static str> {
     let content = readfile(&config.file).unwrap();
     if config.argument == "F" {
