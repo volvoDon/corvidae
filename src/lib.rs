@@ -57,16 +57,16 @@ pub fn scramble(config: &Config) -> Result<String,&'static str> {
         content.push_str("#");
         content.push_str(&item.to_string());
     }
+    content.remove(0);
     Ok(content)
 }
 
-fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
+pub fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
     if content == "" {
         return Err("Given an Empty String");
     }
     let mut in_array: Vec<u32> = Vec::new();
     let v: Vec<&str>  = content.split("#").collect();
-
     for item in v {
         in_array.push(item.parse::<u32>().unwrap());
     }

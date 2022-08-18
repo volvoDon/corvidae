@@ -12,6 +12,8 @@ fn main() {
      
     let content = corvidae::scramble( &config).unwrap();
     println!("{}",content);
+    let v = corvidae::read_to_array(&content).expect("failed");
+    println!("{:?}",v);
 }
 
 
