@@ -59,3 +59,51 @@ pub fn scramble(config: &Config) -> Result<String,&'static str> {
     }
     Ok(content)
 }
+
+fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
+    if content == "" {
+        return Err("Given an Empty String");
+    }
+    let mut in_array: Vec<u32> = Vec::new();
+    let v: Vec<&str>  = content.split("#").collect();
+
+    for item in v {
+        in_array.push(item.parse::<u32>().unwrap());
+    }
+
+    Ok(in_array)
+}
+
+pub fn un_scramble(config: &Config) -> Result<String,&'static str> {
+    let content = readfile(&config.file).unwrap();
+    if config.argument == "F" {
+        return Err("TRIGGERED BY TYPE F")
+    }
+    println!("not enc: {}",content);
+    let b_content =  read_to_array(&content).unwrap();
+    let key_vector = config.key.as_bytes();
+    let mut nb_content: Vec<u32> = Vec::new();
+    let mut i = 0 ;
+    let mut k = 0 ;
+    while i < b_content.len() {
+        if k >= key_vector.len() {
+            k = 0;
+            nb_content.push(b_content[i] - u32::from(key_vector[k]));
+            i+=1;
+            k+=1;  
+        } else {
+            nb_content.push(b_content[i] - u32::from(key_vector[k]));
+            i+=1;
+            k+=1;  
+        }
+
+    }
+    // TODO turn nb_content into u8 and then back into string
+    let mut content = String::new();
+    for item in nb_content {
+        
+        content.push_str("#");
+        content.push_str(&item.to_string());
+    }
+    Ok(content)
+}
