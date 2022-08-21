@@ -75,7 +75,7 @@ pub fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
 }
 
 pub fn un_scramble(config: &Config) -> Result<String,&'static str> {
-    let content = readfile(&config.file).unwrap();
+    let content = readfile(&config.file).expect("file could not be read");
     if config.argument == "F" {
         return Err("TRIGGERED BY TYPE F")
     }
@@ -99,11 +99,12 @@ pub fn un_scramble(config: &Config) -> Result<String,&'static str> {
 
     }
     // TODO turn nb_content into u8 and then back into string
-    let mut content = String::new();
+    let mut nb_content8 = Vec::new();
     for item in nb_content {
-        
-        content.push_str("#");
-        content.push_str(&item.to_string());
+        nb_content8.push(item as u8);
     }
+    let content = String::from_utf8(nb_content8).expect("string from utf8 failed");
     Ok(content)
+        
 }
+    
