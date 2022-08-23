@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::fs;
+use std::fs; 
 
 pub struct Config {
     pub key: String,
@@ -26,8 +26,26 @@ fn readfile(file:&String) -> Result<String,Box<dyn Error>> {
 
 }
 
+fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
+    if content == "" {
+        return Err("Given an Empty String");
+    }
+    let mut in_array: Vec<u32> = Vec::new();
+    let v: Vec<&str>  = content.split("#").collect();
+    println!("str:{:?}",v);
+    for item in v {
+        in_array.push(item.parse::<u32>().unwrap());
+    }
+
+    Ok(in_array)
+}
+fn write_to_file (content: &String,config: &Config){
+    let path = config.file.clone();
+    fs::write(path, content).expect("could not write file");
+} 
+
 //TODO refactor to accept longer keys maybe break into multiple functions
-pub fn scramble(config: &Config) -> Result<String,&'static str> {
+pub fn scramble(config: &Config) -> Result<(),&'static str> {
     let content = readfile(&config.file).unwrap();
     if config.argument == "F" {
         return Err("TRIGGERED BY TYPE F")
@@ -58,28 +76,15 @@ pub fn scramble(config: &Config) -> Result<String,&'static str> {
         content.push_str(&item.to_string());
     }
     content.remove(0);
-    Ok(content)
+    write_to_file(&content, config);
+    Ok(())
 }
 
-pub fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
-    if content == "" {
-        return Err("Given an Empty String");
-    }
-    let mut in_array: Vec<u32> = Vec::new();
-    let v: Vec<&str>  = content.split("#").collect();
-    for item in v {
-        in_array.push(item.parse::<u32>().unwrap());
-    }
-
-    Ok(in_array)
-}
-
-pub fn un_scramble(config: &Config) -> Result<String,&'static str> {
+pub fn un_scramble(config: &Config) -> Result<(),&'static str> {
     let content = readfile(&config.file).expect("file could not be read");
     if config.argument == "F" {
         return Err("TRIGGERED BY TYPE F")
     }
-    println!("not enc: {}",content);
     let b_content =  read_to_array(&content).unwrap();
     let key_vector = config.key.as_bytes();
     let mut nb_content: Vec<u32> = Vec::new();
@@ -98,13 +103,24 @@ pub fn un_scramble(config: &Config) -> Result<String,&'static str> {
         }
 
     }
-    // TODO turn nb_content into u8 and then back into string
+    
     let mut nb_content8 = Vec::new();
     for item in nb_content {
         nb_content8.push(item as u8);
     }
     let content = String::from_utf8(nb_content8).expect("string from utf8 failed");
-    Ok(content)
+    write_to_file(&content, config);
+    Ok(())
         
+}
+
+pub fn run (config: &Config) {
+    if config.argument == "-e" {
+        scramble(config).unwrap();
+    } else if config.argument == "-d" {
+        un_scramble(config).unwrap();         
+    } else {
+        println!("incorrect Argument (-e for encrypt, -d for decrypt)")
+    }
 }
     

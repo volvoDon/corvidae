@@ -9,11 +9,8 @@ fn main() {
     println!("file: {}",config.file);
     println!("argument: {}",config.argument);
 
-     
-    let content = corvidae::scramble( &config).unwrap();
-    println!("{}",content);
-    let v = corvidae::read_to_array(&content).expect("failed");
-    println!("{:?}",v);
+    corvidae::run(&config); 
+
 }
 
 
