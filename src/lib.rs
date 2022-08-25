@@ -32,7 +32,6 @@ fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
     }
     let mut in_array: Vec<u32> = Vec::new();
     let v: Vec<&str>  = content.split("#").collect();
-    println!("str:{:?}",v);
     for item in v {
         in_array.push(item.parse::<u32>().unwrap());
     }
@@ -50,7 +49,6 @@ pub fn scramble(config: &Config) -> Result<(),&'static str> {
     if config.argument == "F" {
         return Err("TRIGGERED BY TYPE F")
     }
-    println!("not enc: {}",content);
     let b_content =  content.as_bytes();
     let key_vector = config.key.as_bytes();
     let mut nb_content: Vec<u32> = Vec::new();
