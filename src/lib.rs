@@ -1,5 +1,6 @@
 use std::error::Error;
-use std::fs; 
+use std::fs;
+use png; 
 
 pub struct Config {
     pub key: String,
@@ -112,11 +113,25 @@ pub fn un_scramble(config: &Config) -> Result<(),&'static str> {
         
 }
 
+pub fn read_png (config: &Config) {
+    let decoder = png::Decoder::new(fs::File::open(config.file.clone()).unwrap());
+    let mut reader = decoder.read_info().unwrap();
+    let mut buf = vec![0; reader.output_buffer_size()];
+    // Read the next frame. An APNG might contain multiple frames.
+    let info = reader.next_frame(&mut buf).unwrap();
+    // Grab the bytes of the image.
+    let bytes = &buf[..info.buffer_size()];
+    println!("png_info: {:?}",info);
+    println!("bit_length: {:?}",bytes.len());
+}
+//TODO use this info to write a png with hidden data
 pub fn run (config: &Config) {
     if config.argument == "-e" {
         scramble(config).unwrap();
     } else if config.argument == "-d" {
         un_scramble(config).unwrap();         
+    } else if config.argument == "-p" {
+        read_png(config);
     } else {
         println!("incorrect Argument (-e for encrypt, -d for decrypt)")
     }
