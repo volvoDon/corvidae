@@ -7,7 +7,17 @@ Quick and Robust Command Line File Encryption
 - Secret messages to your friends
 - Use it on ur .env secrets file and then upload it to github and nobody will know!
 ## Installation
-For installation it is Important you have rust installed on your machine to compile from source.
+For installation it is Important you have Rust & Cargo installed on your machine so you can compile from source 
+- [rust & cargo](https://www.rust-lang.org/tools/install)
 
-Once you have compiled the program using 'cargo build --release' you should copy the absolute path of 'target/realease/corvidae'
+Once you have Rust and Cargo compile the program using `cargo build --release` you should copy the absolute path of `target/release/corvidae` and alias it under whatever name you prefer in the terminal `alias corvidae="~/target/release/corvidae"`
+
 ## Methods
+The current realease on has two methods *there will be more soon*
+- "-e" Encrypts a file
+- "-d" De-Encrypts a file
+#### The methods are called as shown below:
+`corvidae pa$sword_no_spaces_allowed123@# fileToModify.txt -e`
+> you must be in the same directory as the file or state and absolute path for things to work properly, also the password shouldn't be longer than the file you are encrypting *inputing the incorrect password to decrypt can cause the program to fail this is intended Behavior
+
+
