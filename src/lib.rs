@@ -1,21 +1,21 @@
 use std::error::Error;
 use std::fs; 
 
-pub struct Config {
-    pub key: String,
-    pub file: String,
-    pub argument: String,
+pub struct Config <'a> {
+    pub key: &'a String,
+    pub file: &'a String,
+    pub argument: &'a String,
 }
 
-impl Config {
+impl Config <'_> {
     pub fn new (args : &Vec<String>) -> Result<Config,&'static str> {
         if args.len() < 4 {
             return Err("not enough arguments")
         }
         
-        let key = args[1].clone();
-        let file = args[2].clone();
-        let argument = args[3].clone();
+        let key = &args[1];
+        let file = &args[2];
+        let argument = &args[3];
         Ok(Config{key,file,argument})
     }    
 }
