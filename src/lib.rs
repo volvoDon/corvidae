@@ -118,7 +118,9 @@ pub fn run (config: &Config) {
     } else if config.argument == "-d" {
         un_scramble(config).unwrap();         
     } else if config.argument == "-p" {
-        steganometry::read_png(config);
+        let png_info = steganometry::read_png(config);
+        println!("png_info: {:?}",png_info.info);
+        println!("bit_length: {:?}",png_info.bytes.len());
     } else {
         println!("incorrect Argument (-e for encrypt, -d for decrypt)")
     }
@@ -128,7 +130,12 @@ mod steganometry {
     use png;
     use std::fs;
     use crate::Config;
-    pub fn read_png (config: &Config) {
+    //only public for now to print
+    pub struct PngInfo {
+        pub info:  png::OutputInfo,
+        pub bytes: Vec<u8>
+    }
+    pub fn read_png (config: &Config) -> PngInfo {
         let decoder = png::Decoder::new(fs::File::open(config.file.clone()).unwrap());
         let mut reader = decoder.read_info().unwrap();
         let mut buf = vec![0; reader.output_buffer_size()];
@@ -136,8 +143,8 @@ mod steganometry {
         let info = reader.next_frame(&mut buf).unwrap();
         // Grab the bytes of the image.
         let bytes = &buf[..info.buffer_size()];
-        println!("png_info: {:?}",info);
-        println!("bit_length: {:?}",bytes.len());
+        
+        PngInfo {info: info, bytes: bytes.to_vec()}
     }
 }
 //TODO use this info to write a png with hidden data
