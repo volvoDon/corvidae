@@ -129,6 +129,8 @@ pub fn run (config: &Config) {
 mod steganometry {
     use png;
     use std::fs;
+    use std::path::Path;
+    use std::io::BufWriter;
     use crate::Config;
     //only public for now to print
     pub struct PngInfo {
@@ -145,6 +147,13 @@ mod steganometry {
         let bytes = &buf[..info.buffer_size()];
         
         PngInfo {info: info, bytes: bytes.to_vec()}
+    }
+    pub fn write_png (config: &Config, pnginfo: &PngInfo) {
+        let path = Path::new(r"/output.png");
+        let file = fs::File::create(path).unwrap();
+        let ref mut w = BufWriter::new(file);
+
+        let mut encoder = png::Encoder::new(w,pnginfo.info.width, pnginfo.info.height);
     }
 }
 //TODO use this info to write a png with hidden data
