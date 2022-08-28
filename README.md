@@ -13,7 +13,7 @@ For installation it is Important you have Rust & Cargo installed on your machine
 Once you have Rust and Cargo compile the program using `cargo build --release` you should copy the absolute path of `target/release/corvidae` and alias it under whatever name you prefer in the terminal `alias corvidae="~/target/release/corvidae"`
 
 ## Methods
-The current realease on has two methods *there will be more soon*
+The current realease on has 4 methods *there will be continued updates*
 - "-e" Encrypts a file
 - "-d" De-Encrypts a file
 - "-p" Embeds file contents into PNG
