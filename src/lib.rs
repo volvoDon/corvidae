@@ -121,8 +121,9 @@ pub fn run (config: &Config) {
         let png_info = steganometry::read_png(config);
         println!("png_info: {:?}",png_info.info);
         println!("bit_length: {:?}",png_info.bytes.len());
+        steganometry::write_png(config, &png_info)
     } else {
-        println!("incorrect Argument (-e for encrypt, -d for decrypt)")
+        println!("incorrect Argument (-e for encrypt, -d for decrypt, -p for stegometric png manipulation)")
     }
 }
 
@@ -130,7 +131,7 @@ mod steganometry {
     use png;
     use std::fs;
     use std::path::Path;
-    use std::io::BufWriter;
+    use std::io::{BufWriter};
     use crate::Config;
     //only public for now to print
     pub struct PngInfo {
@@ -148,12 +149,49 @@ mod steganometry {
         
         PngInfo {info: info, bytes: bytes.to_vec()}
     }
+
+    fn new_datatable (pnginfo: &PngInfo) -> Vec<u8> {
+        let mut table : Vec<u8> = Vec::new();
+        if pnginfo.info.color_type == png::ColorType::Rgb {
+            for (i, el) in pnginfo.bytes.iter().enumerate() {
+                println!("The current element is {}", el);
+                println!("The current index is {}", i);
+            }
+            return table   
+        } else if pnginfo.info.color_type == png::ColorType::Rgba {
+            for (i, el) in pnginfo.bytes.iter().enumerate() {
+                println!("The current element is {}", el);
+                println!("The current index is {}", i);
+            }
+        return table    
+        } else {
+        println!("png is not rgb or rgba");
+        panic!()
+        }
+    }
     pub fn write_png (config: &Config, pnginfo: &PngInfo) {
+
         let path = Path::new(r"/output.png");
         let file = fs::File::create(path).unwrap();
         let ref mut w = BufWriter::new(file);
 
         let mut encoder = png::Encoder::new(w,pnginfo.info.width, pnginfo.info.height);
+        encoder.set_color(png::ColorType::Rgba);
+        encoder.set_depth(png::BitDepth::Eight);
+        encoder.set_trns(vec!(0xFFu8, 0xFFu8, 0xFFu8, 0xFFu8));
+        encoder.set_source_gamma(png::ScaledFloat::from_scaled(45455)); // 1.0 / 2.2, scaled by 100000
+        encoder.set_source_gamma(png::ScaledFloat::new(1.0 / 2.2));     // 1.0 / 2.2, unscaled, but rounded
+        let source_chromaticities = png::SourceChromaticities::new(     // Using unscaled instantiation here
+            (0.31270, 0.32900),
+            (0.64000, 0.33000),
+            (0.30000, 0.60000),
+            (0.15000, 0.06000)
+        );
+        encoder.set_source_chromaticities(source_chromaticities);
+        let mut writer = encoder.write_header().unwrap();
+        let data_table = new_datatable(pnginfo);
+        
+
     }
 }
 //TODO use this info to write a png with hidden data
