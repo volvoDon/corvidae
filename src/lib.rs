@@ -149,21 +149,24 @@ mod steganometry {
         
         PngInfo {info: info, bytes: bytes.to_vec()}
     }
-
+    //TODO finish this trash so it inserts and 
     fn new_datatable (pnginfo: &PngInfo) -> Vec<u8> {
         let mut table : Vec<u8> = Vec::new();
         if pnginfo.info.color_type == png::ColorType::Rgb {
             for (i, el) in pnginfo.bytes.iter().enumerate() {
-                println!("The current element is {}", el);
-                println!("The current index is {}", i);
+                if i%3 == 0 {
+                    println!("The current element is {}", el);
+                    println!("The current index is {}", i);
+                }
             }
             return table   
         } else if pnginfo.info.color_type == png::ColorType::Rgba {
             for (i, el) in pnginfo.bytes.iter().enumerate() {
                 println!("The current element is {}", el);
-                println!("The current index is {}", i);
+                println!("The current index is {}", i);     
+                
             }
-        return table    
+            return table    
         } else {
         println!("png is not rgb or rgba");
         panic!()
@@ -171,8 +174,7 @@ mod steganometry {
     }
     pub fn write_png (config: &Config, pnginfo: &PngInfo) {
 
-        let path = Path::new(r"/output.png");
-        let file = fs::File::create(path).unwrap();
+        let file = fs::File::open(config.file.clone()).unwrap();
         let ref mut w = BufWriter::new(file);
 
         let mut encoder = png::Encoder::new(w,pnginfo.info.width, pnginfo.info.height);
