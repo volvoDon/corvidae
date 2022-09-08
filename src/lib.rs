@@ -20,13 +20,13 @@ impl Config <'_> {
     }    
 }
 
-fn readfile(file:&String) -> Result<String,Box<dyn Error>> {
+pub fn readfile(file:&String) -> Result<String,Box<dyn Error>> {
     let contents = fs::read_to_string(file)?;
     Ok(contents)
 
 }
 
-fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
+pub fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
     if content == "" {
         return Err("Given an Empty String");
     }
@@ -38,7 +38,7 @@ fn read_to_array (content: &String) ->Result<Vec<u32>,&'static str> {
 
     Ok(in_array)
 }
-fn write_to_file (content: &String,config: &Config){
+pub fn write_to_file (content: &String,config: &Config){
     let path = config.file.clone();
     fs::write(path, content).expect("could not write file");
 } 
@@ -149,16 +149,26 @@ mod steganometry {
         
         PngInfo {info: info, bytes: bytes.to_vec()}
     }
-    //TODO finish this trash so it inserts and 
-    fn new_datatable (pnginfo: &PngInfo) -> Vec<u8> {
+    //TODO finish this trash so it inserts make sure to add length checker
+    fn new_datatable (pnginfo: &PngInfo, config: &Config) -> Vec<u8> {
+        let message = crate::readfile(config.key).expect("could not open file");
+        let data = crate::read_to_array(&message).expect("Failed to push string to array, Likely you did not encrypt");
+        println!("len: {}",data.len());
         let mut table : Vec<u8> = Vec::new();
         if pnginfo.info.color_type == png::ColorType::Rgb {
+            let mut cnt = 0;
             for (i, el) in pnginfo.bytes.iter().enumerate() {
-                if i%3 == 0 {
-                    println!("The current element is {}", el);
-                    println!("The current index is {}", i);
+                if (i+1)%3 == 0 && i != 0 {
+                    table.push(*el as u8);
+                    if cnt < data.len() {
+                    table.push(data[cnt] as u8);
+                    cnt += 1}    
+                } else {
+                    table.push(*el);
                 }
+
             }
+        
             return table   
         } else if pnginfo.info.color_type == png::ColorType::Rgba {
             for (i, el) in pnginfo.bytes.iter().enumerate() {
@@ -191,8 +201,10 @@ mod steganometry {
         );
         encoder.set_source_chromaticities(source_chromaticities);
         let mut writer = encoder.write_header().unwrap();
-        let data_table = new_datatable(pnginfo);
-        
+        let data_table = new_datatable(pnginfo,config);
+        for i in 0..500 {
+            println!("data {} , {} ",data_table[i],i);   
+        }
 
     }
 }
