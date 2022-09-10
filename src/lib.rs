@@ -149,7 +149,7 @@ mod steganometry {
         
         PngInfo {info: info, bytes: bytes.to_vec()}
     }
-    //TODO finish this trash so it inserts make sure to add length checker
+   
     fn new_datatable (pnginfo: &PngInfo, config: &Config) -> Vec<u8> {
         let message = crate::readfile(config.key).expect("could not open file");
         let data = crate::read_to_array(&message).expect("Failed to push string to array, Likely you did not encrypt");
@@ -162,7 +162,7 @@ mod steganometry {
                     table.push(*el as u8);
                     if cnt < data.len() {
                     table.push(data[cnt] as u8);
-                    cnt += 1}    
+                    cnt += 1} else {table.push(0)}    
                 } else {
                     table.push(*el);
                 }
@@ -202,9 +202,10 @@ mod steganometry {
         encoder.set_source_chromaticities(source_chromaticities);
         let mut writer = encoder.write_header().unwrap();
         let data_table = new_datatable(pnginfo,config);
-        for i in 0..500 {
+        for i in 1500..2000 {
             println!("data {} , {} ",data_table[i],i);   
         }
+        writer.write_image_data(&data_table).unwrap();
 
     }
 }
