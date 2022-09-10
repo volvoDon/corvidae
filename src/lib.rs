@@ -162,7 +162,7 @@ mod steganometry {
                     table.push(*el as u8);
                     if cnt < data.len() {
                     table.push(data[cnt] as u8);
-                    cnt += 1} else {table.push(0)}    
+                    cnt += 1} else {table.push(255)}    
                 } else {
                     table.push(*el);
                 }
@@ -184,7 +184,7 @@ mod steganometry {
     }
     pub fn write_png (config: &Config, pnginfo: &PngInfo) {
 
-        let file = fs::File::open(config.file.clone()).unwrap();
+        let file = fs::File::create(config.file.clone()).unwrap();
         let ref mut w = BufWriter::new(file);
 
         let mut encoder = png::Encoder::new(w,pnginfo.info.width, pnginfo.info.height);
