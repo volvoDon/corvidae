@@ -122,6 +122,12 @@ pub fn run (config: &Config) {
         println!("png_info: {:?}",png_info.info);
         println!("bit_length: {:?}",png_info.bytes.len());
         steganometry::write_png(config, &png_info)
+    } else if config.argument == "-g" {
+        let png_info = steganometry::read_png(config);
+        println!("png_info: {:?}",png_info.info);
+        println!("bit_length: {:?}",png_info.bytes.len());
+        steganometry::get_message(&png_info).unwrap();
+        
     } else {
         println!("incorrect Argument (-e for encrypt, -d for decrypt, -p for stegometric png manipulation)")
     }
@@ -130,7 +136,6 @@ pub fn run (config: &Config) {
 mod steganometry {
     use png;
     use std::fs;
-    use std::path::Path;
     use std::io::{BufWriter};
     use crate::Config;
     //only public for now to print
@@ -206,6 +211,22 @@ mod steganometry {
         
         writer.write_image_data(&data_table).unwrap();
 
+    }
+    pub fn get_message (png_info:&PngInfo) -> Result<(),&'static str> {
+        if png_info.info.color_type != png::ColorType::Rgba {
+            return Err("Not RGBA No Message")
+        } else {
+            let mut content = String::new();
+            for (i, el) in png_info.bytes.iter().enumerate() {
+                if (i+1)%4 == 0 && i != 0 {
+                    content.push_str("#");
+                    content.push_str(&el.to_string());       
+                } else {}
+            }
+            content.remove(0);
+            fs::write("output.txt", content).expect("could not write file");
+            Ok(())
+        }
     }
 }
 //TODO use this info to write a png with hidden data
