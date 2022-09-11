@@ -154,6 +154,7 @@ mod steganometry {
         let message = crate::readfile(config.key).expect("could not open file");
         let data = crate::read_to_array(&message).expect("Failed to push string to array, Likely you did not encrypt");
         println!("len: {}",data.len());
+        if pnginfo.bytes.len()/3 < data.len() {println!("Warning Data Will be Lost/Image Overflow")} 
         let mut table : Vec<u8> = Vec::new();
         if pnginfo.info.color_type == png::ColorType::Rgb {
             let mut cnt = 0;
@@ -202,9 +203,7 @@ mod steganometry {
         encoder.set_source_chromaticities(source_chromaticities);
         let mut writer = encoder.write_header().unwrap();
         let data_table = new_datatable(pnginfo,config);
-        for i in 1500..2000 {
-            println!("data {} , {} ",data_table[i],i);   
-        }
+        
         writer.write_image_data(&data_table).unwrap();
 
     }
